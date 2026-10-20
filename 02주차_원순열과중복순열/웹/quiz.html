@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2주차 원순열 · 간단 퀴즈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../../_공용/웹/style.css">
+</head>
+<body>
+<header class="topbar"><div class="in">
+  <h1>2주차 원순열</h1>
+  <nav><a href="slides.html">슬라이드</a><a href="quiz.html" aria-current="page">퀴즈</a><a href="playground.html">놀이터</a><a href="../../index.html">목록</a></nav>
+</div></header>
+<main>
+  <p class="eyebrow">복습 퀴즈 · 8문제</p>
+  <h2 class="page">원순열 간단 퀴즈</h2>
+  <p class="lead">답을 고르거나 숫자로 입력 후 바로 채점. 점수는 첫 시도 기준, 기록은 저장되지 않음</p>
+  <div id="quiz"></div>
+  <div class="scorebar"><p id="score"></p><button class="btn" id="retry">다시 풀기</button></div>
+</main>
+<script>
+window.QUIZ = [
+  { q: '원순열에서 같은 배치로 보는 경우는?',
+    options: ['모두 한 칸씩 옮겨 앉은 배치', '두 사람만 자리를 바꾼 배치', '앉는 순서만 다른 배치', '탁자 크기만 다른 배치'],
+    answer: 0, explain: '회전해서 겹치는 배치는 같은 배치. 양옆 사람이 그대로이기 때문',
+    hint: '모두 함께 움직였을 때 양옆 사람이 바뀌는지 확인' },
+  { q: '서로 다른 5명이 원탁에 둘러앉는 경우의 수는?',
+    number: 24, explain: '(5 − 1)! = 4! = 24', hint: '한 사람 고정 후 나머지 4명의 일렬 배치' },
+  { q: '서로 다른 n명의 원순열 1가지에 대응하는 일렬 배열의 개수는?',
+    options: ['n개', '(n − 1)개', '2개', 'n!개'],
+    answer: 0, explain: '맨 앞 사람을 바꾸는 회전 n가지가 모두 같은 원순열. 그래서 n! ÷ n',
+    hint: 'ABCD, BCDA, CDAB, DABC가 원탁에서는 어떻게 되는지 확인' },
+  { q: '6명이 원탁에 앉을 때 특정 두 사람 A, B가 이웃하는 경우의 수는?',
+    number: 48, explain: 'A, B 묶음 + 4명 = 5개의 원순열 4! = 24, 묶음 안 순서 2! = 2 → 24 × 2 = 48',
+    hint: 'A, B를 끈으로 묶어 한 사람처럼 취급, 묶음 안 순서도 계산' },
+  { q: '정오각형 모양의 탁자 각 변에 1명씩 5명이 둘러앉는 경우의 수는?',
+    number: 24, explain: '한 칸씩 돌리면 탁자 모양이 그대로 → 원탁과 같음. (5 − 1)! = 24',
+    hint: '정오각형을 한 칸 돌렸을 때 모양이 겹치는지 확인' },
+  { q: '정사각형 모양의 탁자 각 변에 2명씩 8명이 둘러앉는 경우의 수는?',
+    options: ['5040', '10080', '20160', '40320'],
+    answer: 1, explain: '원순열 7! = 5040 중 한 칸 이동은 다른 배치(변의 끝이 바뀜) → 7! × 2 = 10080',
+    hint: '한 칸 이동과 두 칸 이동(90° 회전) 중 같은 배치가 되는 쪽 확인' },
+  { q: '남학생 2명, 여학생 2명이 원탁에 번갈아 앉는 경우의 수는?',
+    number: 2, explain: '남학생 원순열 (2 − 1)! = 1, 사이 자리 2곳에 여학생 2! = 2 → 1 × 2 = 2',
+    hint: '남학생을 먼저 원형으로 앉힌 뒤 사이 자리에 여학생 배치' },
+  { q: '(심화) 서로 다른 색 구슬 4개로 만들 수 있는 팔찌의 수는?',
+    number: 3, explain: '원순열 3! = 6, 뒤집으면 같아지는 2개씩 묶음 → 6 ÷ 2 = 3',
+    hint: '팔찌는 뒤집어도 같은 물건. 원순열 수를 2로 나누기' },
+];
+</script>
+<script src="../../_공용/웹/quiz.js"></script>
+</body>
+</html>

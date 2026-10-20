@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2주차 원순열 · 놀이터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../../_공용/웹/style.css">
+<style>
+  .play { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 820px) { .play { grid-template-columns: 1fr; } }
+  #stage { width: 100%; height: auto; display: block; background: #FFFFFF; border-radius: 8px; touch-action: manipulation; }
+  #stage .person { cursor: pointer; }
+  #stage text { font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif; pointer-events: none; }
+  .caption { text-align: center; font-size: 17px; font-weight: 500; min-height: 28px; margin-top: 10px; }
+  .group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+  .group h3 { font-size: 15px; color: var(--faint); font-weight: 700; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .reads { display: flex; flex-wrap: wrap; gap: 6px; }
+  .reads span { font-family: ui-monospace, Consolas, monospace; font-size: 16px; background: var(--panel-2); border-radius: 6px; padding: 3px 9px; }
+  .count { font-size: 17px; line-height: 1.6; }
+  .count b { color: var(--orange-text); }
+  #found { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; max-height: 300px; overflow: auto; }
+  #found svg { width: 64px; height: 64px; background: var(--panel-2); border-radius: 8px; }
+  #found svg.new { outline: 3px solid var(--orange); }
+  #msg { font-size: 16px; min-height: 26px; }
+  .help { color: var(--muted); font-size: 15px; line-height: 1.7; padding-left: 18px; }
+</style>
+</head>
+<body>
+<header class="topbar"><div class="in">
+  <h1>2주차 원순열</h1>
+  <nav><a href="slides.html">슬라이드</a><a href="quiz.html">퀴즈</a><a href="playground.html" aria-current="page">놀이터</a><a href="../../index.html">목록</a></nav>
+</div></header>
+<main>
+  <p class="eyebrow">직접 해 보는 원순열</p>
+  <h2 class="page">원순열 놀이터</h2>
+  <p class="lead">사람을 돌리고, 뒤집고, 자리를 바꿔 보며 서로 다른 배치 모으기. 수업 manim 애니메이션과 같은 색·모양</p>
+
+  <div class="play">
+    <section class="panel">
+      <svg id="stage" viewBox="0 0 520 520" role="img" aria-label="원탁에 둘러앉은 사람들"></svg>
+      <p class="caption" id="caption"></p>
+    </section>
+
+    <section class="panel">
+      <div class="group">
+        <h3>인원</h3>
+        <div class="btns" id="sizes"></div>
+      </div>
+      <div class="group">
+        <h3>물건</h3>
+        <div class="btns">
+          <button class="btn" id="mTable" aria-pressed="true">원탁 (회전만 같음)</button>
+          <button class="btn" id="mBracelet" aria-pressed="false">팔찌 (뒤집기도 같음)</button>
+        </div>
+      </div>
+      <div class="group">
+        <h3>움직이기 · 사람 두 명을 누르면 자리 바꾸기</h3>
+        <div class="btns">
+          <button class="btn" id="rot">⟳ 한 칸 회전</button>
+          <button class="btn" id="flip">↔ 뒤집기</button>
+          <button class="btn" id="shuf">섞기</button>
+        </div>
+      </div>
+      <div class="group">
+        <h3>자리마다 시작점을 바꿔 시계 방향으로 일렬 읽기</h3>
+        <div class="reads" id="reads"></div>
+      </div>
+      <div class="group">
+        <h3>서로 다른 배치 모으기</h3>
+        <div class="btns">
+          <button class="btn primary" id="save">이 배치 기록</button>
+          <button class="btn" id="all">모두 보기</button>
+          <button class="btn" id="clear">지우기</button>
+        </div>
+        <p id="msg" role="status" aria-live="polite"></p>
+        <p class="count" id="count"></p>
+        <div id="found"></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:20px">
+    <h3 style="font-size:17px;margin-bottom:6px">해 볼 것</h3>
+    <ol class="help">
+      <li>4명, 원탁: 한 칸 회전 후 기록 → 같은 배치로 판정되는 이유 확인</li>
+      <li>4명, 원탁: 자리 바꾸기로 서로 다른 배치 6개(3!) 모두 찾기</li>
+      <li>같은 배치를 팔찌 모드로 바꾸면 몇 개로 줄어드는지 확인 (6 → 3)</li>
+      <li>원탁에서 뒤집은 배치가 다른 배치로 판정되는 이유 생각</li>
+    </ol>
+  </section>
+</main>
+<footer class="site">확률과 통계 · 2주차 원순열</footer>
+
+<script>
+(() => {
+  const C = 260, R = 165, NODE = 34;
+  const COLORS = ['#3B7EA1', '#EB811B', '#5B9E6F', '#C0504D', '#8064A2', '#D4A017', '#23373B'];
+  const NAMES = 'ABCDEFG';
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const $ = s => document.querySelector(s);
+  const stage = $('#stage');
+  const fact = k => (k <= 1 ? 1 : k * fact(k - 1));
+
+  let n = 4, bracelet = false, seats = [], pos = [], picked = null, busy = false;
+  let found = new Map(), lastKey = null;
+
+  const angle = s => -Math.PI / 2 + (2 * Math.PI * s) / n;      // 0번 자리 = 맨 위, 시계 방향
+  const xy = th => [C + R * Math.cos(th), C + R * Math.sin(th)];
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(svgNS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    parent && parent.append(e);
+    return e;
+  };
+
+  // 배치를 대표하는 문자열: A부터 시계 방향으로 읽기 (팔찌는 반대 방향과 비교해 작은 쪽)
+  function order(arr) {
+    const k = arr.indexOf(0);
+    return arr.slice(k).concat(arr.slice(0, k));
+  }
+  function keyOf(arr, flipOk) {
+    const a = order(arr).map(i => NAMES[i]).join('');
+    if (!flipOk) return a;
+    const b = a[0] + [...a.slice(1)].reverse().join('');
+    return a < b ? a : b;
+  }
+
+  function build() {
+    stage.innerHTML = '';
+    el('circle', { cx: C, cy: C, r: R * 0.62, fill: bracelet ? 'none' : '#E3C59E',
+      stroke: bracelet ? '#8A9499' : '#A0784F', 'stroke-width': bracelet ? 4 : 3 }, stage);
+    if (bracelet) el('circle', { cx: C, cy: C, r: R, fill: 'none', stroke: '#8A9499', 'stroke-width': 5 }, stage);
+    for (let i = 0; i < n; i++) {
+      const g = el('g', { class: 'person', 'data-i': i, tabindex: 0, role: 'button', 'aria-label': NAMES[i] }, stage);
+      el('circle', { r: NODE, fill: COLORS[i], stroke: '#FFFFFF', 'stroke-width': 3 }, g);
+      el('text', { y: 11, 'text-anchor': 'middle', 'font-size': 30, 'font-weight': 700, fill: '#FFFFFF' }, g).textContent = NAMES[i];
+      g.addEventListener('click', () => pick(i));
+      g.addEventListener('keydown', e => (e.key === 'Enter' || e.key === ' ') && pick(i));
+    }
+    draw();
+  }
+
+  function draw() {
+    stage.querySelectorAll('.person').forEach(g => {
+      const i = +g.dataset.i;
+      g.setAttribute('transform', `translate(${pos[i][0]},${pos[i][1]})`);
+      g.querySelector('circle').setAttribute('stroke', picked === i ? '#23373B' : '#FFFFFF');
+      g.querySelector('circle').setAttribute('stroke-width', picked === i ? 6 : 3);
+    });
+    const reads = [];
+    for (let k = 0; k < n; k++) reads.push(seats.slice(k).concat(seats.slice(0, k)).map(i => NAMES[i]).join(''));
+    $('#reads').innerHTML = reads.map(r => `<span>${r}</span>`).join('') +
+      `<span style="background:none">→ 원순열 1가지 = 일렬 배열 ${n}가지</span>`;
+    const total = bracelet ? fact(n - 1) / 2 : fact(n - 1);
+    $('#count').innerHTML = `찾은 배치 <b>${found.size}</b> / ${total} &nbsp;·&nbsp; ` +
+      (bracelet ? `팔찌: (${n} − 1)! ÷ 2 = ${fact(n - 1)} ÷ 2 = ${total}` : `원탁: (${n} − 1)! = ${total}`);
+    $('#all').disabled = total > 120;
+  }
+
+  function target() {
+    const p = [];
+    seats.forEach((person, s) => (p[person] = xy(angle(s))));
+    return p;
+  }
+
+  // 움직임: mover(t)가 t∈[0,1]에서 각 사람 위치를 돌려줌 (manim의 Transform처럼 부드럽게)
+  function animate(mover, ms, done, cap) {
+    busy = true;
+    $('#caption').textContent = cap || '';
+    const t0 = performance.now();
+    const ease = t => (t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+    const step = now => {
+      const t = Math.min(1, (now - t0) / ms);
+      pos = mover(ease(t));
+      draw();
+      if (t < 1) requestAnimationFrame(step);
+      else { busy = false; pos = target(); draw(); done && done(); }
+    };
+    requestAnimationFrame(step);
+  }
+
+  function rotate() {
+    if (busy) return;
+    const from = seats.slice();
+    seats = [seats[n - 1], ...seats.slice(0, n - 1)];
+    const d = (2 * Math.PI) / n;
+    animate(t => { const p = []; from.forEach((person, s) => (p[person] = xy(angle(s) + d * t))); return p; },
+      700, null, '모두 한 칸씩 이동 · 양옆 사람은 그대로');
+  }
+
+  function flip() {
+    if (busy) return;
+    const from = target();
+    seats = seats.map((_, s) => seats[(n - s) % n]);
+    animate(t => from.map(([x, y]) => [C + (x - C) * Math.cos(Math.PI * t), y]),
+      900, null, bracelet ? '뒤집기 · 팔찌는 뒤집어도 같은 물건' : '뒤집기 · 시계 방향 ↔ 반시계 방향 (원탁에서는 다른 배치)');
+  }
+
+  function moveTo(next, cap) {
+    const from = target();
+    seats = next;
+    const to = target();
+    animate(t => from.map(([x, y], i) => [x + (to[i][0] - x) * t, y + (to[i][1] - y) * t]), 650, null, cap);
+  }
+
+  function shuffle() {
+    if (busy) return;
+    const next = seats.slice();
+    for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [next[i], next[j]] = [next[j], next[i]]; }
+    moveTo(next, '자리 섞기');
+  }
+
+  function pick(i) {
+    if (busy) return;
+    if (picked === null) { picked = i; $('#caption').textContent = `${NAMES[i]} 선택 · 바꿀 사람 누르기`; draw(); return; }
+    const a = picked; picked = null;
+    if (a === i) { draw(); $('#caption').textContent = ''; return; }
+    const next = seats.slice(), sa = next.indexOf(a), sb = next.indexOf(i);
+    [next[sa], next[sb]] = [next[sb], next[sa]];
+    moveTo(next, `${NAMES[a]} ↔ ${NAMES[i]} 자리 바꾸기`);
+  }
+
+  function mini(key) {
+    const s = el('svg', { viewBox: '0 0 64 64', role: 'img', 'aria-label': `배치 ${key.split('').join(' ')}` });
+    el('circle', { cx: 32, cy: 32, r: 13, fill: bracelet ? 'none' : '#E3C59E', stroke: '#A0784F' }, s);
+    [...key].forEach((ch, k) => {
+      const th = -Math.PI / 2 + (2 * Math.PI * k) / n;
+      const c = el('circle', { cx: 32 + 22 * Math.cos(th), cy: 32 + 22 * Math.sin(th), r: 7, fill: COLORS[NAMES.indexOf(ch)] }, s);
+      el('title', {}, c).textContent = ch;
+    });
+    return s;
+  }
+
+  function renderFound() {
+    const box = $('#found');
+    box.innerHTML = '';
+    for (const k of found.keys()) {
+      const m = mini(k);
+      if (k === lastKey) m.classList.add('new');
+      box.append(m);
+    }
+  }
+
+  function save() {
+    if (busy) return;
+    const key = keyOf(seats, bracelet);
+    if (found.has(key)) {
+      const sameRot = found.get(key) === keyOf(seats, false);
+      $('#msg').textContent = sameRot ? '이미 찾은 배치 · 회전하면 겹치는 같은 배치'
+                                      : '이미 찾은 배치 · 뒤집으면 겹치는 같은 팔찌';
+    } else {
+      found.set(key, keyOf(seats, false));
+      $('#msg').textContent = `새로운 배치 · A부터 시계 방향 ${keyOf(seats, false)}`;
+    }
+    lastKey = key;
+    renderFound();
+    draw();
+  }
+
+  function showAll() {
+    const perm = a => (a.length <= 1 ? [a] : a.flatMap((x, i) => perm([...a.slice(0, i), ...a.slice(i + 1)]).map(p => [x, ...p])));
+    found = new Map();
+    perm([...Array(n - 1).keys()].map(i => i + 1)).forEach(p => {
+      const arr = [0, ...p], k = keyOf(arr, bracelet);
+      if (!found.has(k)) found.set(k, keyOf(arr, false));
+    });
+    lastKey = null;
+    $('#msg').textContent = `A 고정 후 나머지 ${n - 1}명의 일렬 배치 ${fact(n - 1)}가지` + (bracelet ? ` ÷ 2 = ${found.size}가지` : '');
+    renderFound();
+    draw();
+  }
+
+  function reset(newN) {
+    n = newN;
+    seats = [...Array(n).keys()];
+    pos = target();
+    picked = null;
+    found = new Map();
+    lastKey = null;
+    $('#msg').textContent = '';
+    $('#caption').textContent = `${n}명 원탁 · 회전해서 겹치는 배치는 같은 배치`;
+    document.querySelectorAll('#sizes .btn').forEach(b => b.setAttribute('aria-pressed', +b.dataset.n === n));
+    build();
+    renderFound();
+  }
+
+  function setMode(isBracelet) {
+    bracelet = isBracelet;
+    $('#mTable').setAttribute('aria-pressed', !bracelet);
+    $('#mBracelet').setAttribute('aria-pressed', bracelet);
+    // 기록을 새 기준으로 다시 묶기
+    const old = [...found.values()];
+    found = new Map();
+    old.forEach(rot => { const arr = [...rot].map(c => NAMES.indexOf(c)); const k = keyOf(arr, bracelet); if (!found.has(k)) found.set(k, rot); });
+    $('#msg').textContent = old.length ? `기록 ${old.length}개 → ${bracelet ? '팔찌' : '원탁'} 기준 ${found.size}개` : '';
+    $('#caption').textContent = bracelet ? '팔찌 · 회전과 뒤집기 모두 같은 물건' : '원탁 · 회전해서 겹치는 배치만 같은 배치';
+    lastKey = null;
+    build();
+    renderFound();
+  }
+
+  for (let k = 3; k <= 7; k++) {
+    const b = document.createElement('button');
+    b.className = 'btn'; b.dataset.n = k; b.textContent = `${k}명`;
+    b.onclick = () => !busy && reset(k);
+    $('#sizes').append(b);
+  }
+  $('#mTable').onclick = () => !busy && setMode(false);
+  $('#mBracelet').onclick = () => !busy && setMode(true);
+  $('#rot').onclick = rotate;
+  $('#flip').onclick = flip;
+  $('#shuf').onclick = shuffle;
+  $('#save').onclick = save;
+  $('#all').onclick = showAll;
+  $('#clear').onclick = () => { found = new Map(); lastKey = null; $('#msg').textContent = ''; renderFound(); draw(); };
+  reset(4);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2주차 원순열 · 슬라이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../../_공용/웹/style.css">
+</head>
+<body class="deck">
+<div class="stage" data-footer="확률과 통계 · 2주차 원순열">
+
+<section class="slide cover" style="align-items:center;gap:64px;padding:128px">
+  <div style="position:absolute;left:0;top:0;width:100%;height:24px;background:var(--navy)"></div>
+  <div class="col" style="gap:32px">
+    <p class="b orange" style="font-weight:700">2주차</p>
+    <h1 style="font-size:96px;font-weight:900;line-height:1.1">원순열</h1>
+    <p class="b" style="color:var(--muted)">circular permutation</p>
+    <div style="width:520px;height:8px;background:var(--orange)"></div>
+    <p class="muted" style="line-height:1.5">확률과 통계 · 공과대학 1학년<br>교과서: 미래엔 「확률과 통계」 Ⅰ-1 순열과 조합 p.11~12</p>
+  </div>
+  <img src="../생성미디어/회전개념도.png" alt="원탁 위 사람들이 한 칸씩 회전하는 개념 일러스트" style="width:800px;height:447px;object-fit:cover;border-radius:16px">
+</section>
+
+<section class="slide" style="flex-direction:column;align-items:center;gap:28px;padding-top:216px">
+  <div class="bar"><h2>도입: 모두 한 칸씩 옮겨 앉으면?</h2></div>
+  <video src="../생성미디어/도입영상.mp4" poster="../생성미디어/도입영상_첫장면.png" muted loop playsinline controls preload="metadata"
+         style="width:1000px;height:563px;object-fit:cover;border-radius:16px;background:#000"></video>
+  <p class="key">질문: 모두 옆자리로 옮겨 앉은 뒤의 배치는 처음과 다른 배치인가?</p>
+</section>
+
+<section class="slide" style="align-items:center">
+  <div class="bar"><h2>오늘의 학습 목표</h2></div>
+  <div class="grid4">
+    <div class="card"><p class="num">01</p><h3>원순열의 뜻</h3><p class="muted">원탁 회의 비유</p></div>
+    <div class="card"><p class="num">02</p><h3>공식 (n − 1)!</h3><p class="muted">한 사람 고정하기</p></div>
+    <div class="card"><p class="num">03</p><h3>이웃 조건·<br>다각형 탁자</h3><p class="muted">끈으로 묶기, 탁자 모양 비교</p></div>
+    <div class="card"><p class="num">04</p><h3>팔찌·목걸이 순열</h3><p class="muted">뒤집기 비유 (심화)</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="bar"><h2>원순열이란: 원탁 회의 비유</h2></div>
+  <div class="row">
+    <div class="col">
+      <p class="b" style="font-weight:700">원순열(circular permutation)</p>
+      <p class="sub">서로 다른 대상을 원형으로 배열하는 순열</p>
+      <p class="b">회전해서 겹치는 배열은 같은 것으로 간주</p>
+      <p class="b">비유: 원탁 회의</p>
+      <p class="sub">모두 한 칸씩 옮겨 앉아도 양옆 사람은 그대로</p>
+      <p class="sub">누가 누구 옆에 앉았는지가 핵심</p>
+      <p class="b">일렬 순열과의 차이: 맨 앞·맨 뒤 자리 없음</p>
+    </div>
+    <img class="fig" loading="lazy" src="../애니메이션/RoundTableRotate.gif" alt="원탁의 사람들이 한 칸씩 회전해도 이웃 관계가 유지되는 애니메이션">
+  </div>
+</section>
+
+<section class="slide" style="flex-direction:column;justify-content:center;gap:48px">
+  <div class="bar"><h2>생활 속 원순열</h2></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <figure style="display:flex;flex-direction:column;align-items:center;gap:20px"><img loading="lazy" src="../생성미디어/원탁토론.png" alt="원탁에 둘러앉아 회의하는 사람들 일러스트" style="width:522px;height:294px;object-fit:cover;border-radius:12px"><h3>원탁 회의</h3></figure>
+    <figure style="display:flex;flex-direction:column;align-items:center;gap:20px"><img loading="lazy" src="../생성미디어/구절판.png" alt="정팔각형 구절판 일러스트" style="width:522px;height:294px;object-fit:cover;border-radius:12px"><h3>정팔각형 구절판</h3></figure>
+    <figure style="display:flex;flex-direction:column;align-items:center;gap:20px"><img loading="lazy" src="../생성미디어/팔찌.png" alt="여러 색 구슬로 만든 팔찌 일러스트" style="width:522px;height:294px;object-fit:cover;border-radius:12px"><h3>구슬 팔찌</h3></figure>
+  </div>
+  <div class="col" style="gap:16px">
+    <p class="b">공통점: 맨 앞·맨 뒤 없이 둥글게 놓인 배열</p>
+    <p class="b">차이점: 팔찌는 뒤집을 수 있음 → <span class="orange">오늘 마지막 심화 주제</span></p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="bar"><h2>일렬 순열과 원순열의 관계</h2></div>
+  <div class="row">
+    <div class="col">
+      <p class="b">일렬 배열 ABCD, BCDA, CDAB, DABC</p>
+      <p class="sub">맨 앞 사람을 맨 뒤로 보내는 회전 관계</p>
+      <p class="b">원탁에 앉히면 모두 같은 배치</p>
+      <p class="b">원순열 1가지 ↔ 일렬 배열 n가지 대응</p>
+      <p class="key">원순열의 수 = n! ÷ n</p>
+      <p class="sub">4명: 4! ÷ 4 = 24 ÷ 4 = 6</p>
+    </div>
+    <img class="fig" loading="lazy" src="../애니메이션/LineToCircle.gif" alt="일렬 배열 4개가 원탁 위 하나의 배치로 겹쳐지는 애니메이션">
+  </div>
+</section>
+
+<section class="slide">
+  <div class="bar"><h2>공식: 한 사람을 고정하기</h2></div>
+  <div class="row">
+    <div class="col">
+      <p class="b">한 사람(A)의 자리를 기준으로 고정</p>
+      <p class="sub">회전으로 겹치는 경우가 저절로 사라짐</p>
+      <p class="b">나머지 (n − 1)명의 일렬 배치와 같음</p>
+      <p class="key">원순열의 수 = n! ÷ n = (n − 1)!</p>
+      <p class="b">예: 4명 → 3! = 6</p>
+      <p class="b">예: 5명 → 4! = 24</p>
+    </div>
+    <img class="fig" loading="lazy" src="../애니메이션/FixOnePerson.gif" alt="A를 고정하고 나머지 3명을 배치한 원탁 6개 애니메이션">
+  </div>
+</section>
+
+<section class="slide" style="gap:48px;padding-top:216px">
+  <div class="bar"><h2>예제</h2></div>
+  <div class="card" style="flex:1;background:var(--panel-2);border:none;padding:36px 40px;gap:16px">
+    <p class="muted orange" style="font-weight:700">예제 1</p>
+    <p class="b" style="font-weight:700">서로 다른 7명이 원탁에 둘러앉는 경우의 수</p>
+    <div style="display:flex;align-items:center;gap:40px">
+      <svg width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="원탁 둘레 7자리 중 맨 위 A 자리를 고정한 그림">
+        <circle cx="160" cy="160" r="80" fill="#E3C59E"/>
+        <g fill="#8A9499"><circle cx="249.9" cy="88.3" r="27"/><circle cx="272.1" cy="185.6" r="27"/><circle cx="209.9" cy="263.6" r="27"/><circle cx="110.1" cy="263.6" r="27"/><circle cx="47.9" cy="185.6" r="27"/><circle cx="70.1" cy="88.3" r="27"/></g>
+        <circle cx="160" cy="45" r="27" fill="#C4610A"/>
+        <text x="160" y="55" text-anchor="middle" font-size="30" font-weight="700" fill="#FAFAF7">A</text>
+      </svg>
+      <div class="col">
+        <p class="muted">한 명 고정 → 나머지 6명 일렬 배치</p>
+        <p class="key">(7 − 1)! = 6! = 720</p>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="flex:1;background:var(--panel-2);border:none;padding:36px 40px;gap:16px">
+    <p class="muted orange" style="font-weight:700">예제 2</p>
+    <p class="b" style="font-weight:700">6명이 원탁에 앉을 때 A와 B가 마주 보고 앉는 경우의 수</p>
+    <div style="display:flex;align-items:center;gap:40px">
+      <svg width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="원탁 둘레 6자리 중 A를 맨 위에, B를 맞은편에 놓은 그림">
+        <circle cx="160" cy="160" r="80" fill="#E3C59E"/>
+        <g fill="#8A9499"><circle cx="259.6" cy="102.5" r="27"/><circle cx="259.6" cy="217.5" r="27"/><circle cx="60.4" cy="217.5" r="27"/><circle cx="60.4" cy="102.5" r="27"/></g>
+        <circle cx="160" cy="45" r="27" fill="#C4610A"/><circle cx="160" cy="275" r="27" fill="#C4610A"/>
+        <g text-anchor="middle" font-size="30" font-weight="700" fill="#FAFAF7"><text x="160" y="55">A</text><text x="160" y="285">B</text></g>
+      </svg>
+      <div class="col">
+        <p class="muted">A 고정 → B는 맞은편 1자리로 결정</p>
+        <p class="key">나머지 4명: 4! = 24</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="bar"><h2>이웃 조건: 끈으로 묶기</h2></div>
+  <div class="row">
+    <div class="col">
+      <p class="b">조건: 특정 두 사람 A, B가 반드시 이웃</p>
+      <p class="b">비유: 두 사람을 끈으로 묶어 한 사람처럼 취급</p>
+      <p class="b">① 묶음 1개 + 나머지 4명 = 5개의 원순열</p>
+      <p class="sub">(5 − 1)! = 24</p>
+      <p class="b">② 묶음 안 순서: AB, BA</p>
+      <p class="sub">2! = 2</p>
+      <p class="key">24 × 2 = 48</p>
+    </div>
+    <img class="fig" loading="lazy" src="../애니메이션/NeighborsGlue.gif" alt="A와 B를 끈으로 묶어 한 묶음으로 원탁에 배치하는 애니메이션">
+  </div>
+</section>
+
+<section class="slide">
+  <div class="bar"><h2>다각형 탁자: 탁자 모양 비교</h2></div>
+  <div class="row">
+    <div class="col" style="gap:18px">
+      <p class="b">정n각형 탁자, 각 변에 1명씩</p>
+      <p class="sub">한 칸씩 돌리면 모양 일치 → 원탁과 같음</p>
+      <p class="sub">정팔각형 8명: (8 − 1)! = 7!</p>
+      <p class="b">정사각형 탁자, 각 변에 2명씩 (8명)</p>
+      <p class="sub">한 칸 이동: 변의 왼쪽 끝 ↔ 오른쪽 끝, 다른 배치</p>
+      <p class="sub">두 칸 이동(90° 회전): 같은 배치</p>
+      <p class="key">원순열 7! × 2 = 10080</p>
+    </div>
+    <img class="fig" loading="lazy" src="../애니메이션/PolygonTable.gif" alt="정팔각형 탁자와 정사각형 탁자에서 회전에 따른 배치 비교 애니메이션">
+  </div>
+</section>
+
+<section class="slide">
+  <div class="bar"><h2>심화: 팔찌·목걸이 순열 (교과서 범위 밖)</h2></div>
+  <div class="row">
+    <div class="col">
+      <p class="b">팔찌, 목걸이: 뒤집어도 같은 물건</p>
+      <p class="b">시계 방향 배열 = 반시계 방향 배열</p>
+      <p class="b">원순열 2개 → 팔찌 1개 대응</p>
+      <p class="key">팔찌 순열의 수 = (n − 1)! ÷ 2</p>
+      <p class="sub">n ≥ 3일 때 성립</p>
+      <p class="b">예: 서로 다른 구슬 5개 → 24 ÷ 2 = 12</p>
+    </div>
+    <img class="fig" loading="lazy" src="../애니메이션/NecklaceFlip.gif" alt="팔찌를 뒤집으면 시계 방향 배열이 반시계 방향 배열과 겹치는 애니메이션">
+  </div>
+</section>
+
+<section class="slide">
+  <div class="bar"><h2>공학 속 원순열: 링 네트워크</h2></div>
+  <div class="row">
+    <div class="col">
+      <p class="b">링(ring) 네트워크</p>
+      <p class="sub">컴퓨터를 원형으로 연결하는 통신 구조</p>
+      <p class="b">노드 배치 순서의 경우의 수 = 원순열</p>
+      <p class="b">신호 방향을 구분하지 않으면 팔찌 순열</p>
+      <p class="key">노드 6개: 5! ÷ 2 = 60가지</p>
+      <p class="b">같은 원리: 원형 회전 테이블 공정, 터빈 블레이드 배치</p>
+    </div>
+    <svg width="520" height="520" viewBox="0 0 520 520" role="img" aria-label="컴퓨터 6대 PC1~PC6가 원형으로 이웃끼리 연결된 링 네트워크" style="flex:none">
+      <polygon points="260,60 433.2,160 433.2,360 260,460 86.8,360 86.8,160" fill="none" stroke="#8A9499" stroke-width="6"/>
+      <g fill="#23373B"><circle cx="260" cy="60" r="50"/><circle cx="433.2" cy="160" r="50"/><circle cx="433.2" cy="360" r="50"/><circle cx="260" cy="460" r="50"/><circle cx="86.8" cy="360" r="50"/><circle cx="86.8" cy="160" r="50"/></g>
+      <g text-anchor="middle" font-size="28" font-weight="700" fill="#FAFAF7"><text x="260" y="70">PC1</text><text x="433.2" y="170">PC2</text><text x="433.2" y="370">PC3</text><text x="260" y="470">PC4</text><text x="86.8" y="370">PC5</text><text x="86.8" y="170">PC6</text></g>
+      <text x="260" y="270" text-anchor="middle" font-size="30" fill="#4A5A5E">신호 흐름</text>
+    </svg>
+  </div>
+</section>
+
+<section class="slide dark" style="flex-direction:column;justify-content:space-between;gap:48px">
+  <h2 style="font-size:64px;font-weight:700">정리</h2>
+  <div class="grid4">
+    <div class="card" style="background:var(--navy-2);border:none;border-top:8px solid var(--orange);padding:36px 32px"><p class="muted" style="color:#F5A35A;font-weight:700">원순열</p><p class="b" style="font-weight:700">(n − 1)!</p></div>
+    <div class="card" style="background:var(--navy-2);border:none;border-top:8px solid var(--orange);padding:36px 32px"><p class="muted" style="color:#F5A35A;font-weight:700">이웃 조건</p><p class="b" style="font-weight:700">묶음 원순열 × 묶음 안 순서</p></div>
+    <div class="card" style="background:var(--navy-2);border:none;border-top:8px solid var(--orange);padding:36px 32px"><p class="muted" style="color:#F5A35A;font-weight:700">팔찌·목걸이</p><p class="b" style="font-weight:700">(n − 1)! ÷ 2</p></div>
+    <div class="card" style="background:var(--navy-2);border:none;border-top:8px solid var(--orange);padding:36px 32px"><p class="muted" style="color:#F5A35A;font-weight:700">핵심 원리</p><p class="b" style="font-weight:700">중복해서 센 만큼 나누기</p></div>
+  </div>
+  <div class="col" style="flex:none">
+    <p class="b" style="color:#DCE3E4">회전으로 같아지는 것 n개 → ÷ n,&nbsp; 뒤집어서 같아지는 것 2개 → ÷ 2</p>
+    <p class="b" style="color:#DCE3E4">막히면 한 사람 고정 후 일렬 순열로 바꿔 생각</p>
+  </div>
+</section>
+
+<section class="slide" style="flex-direction:column;gap:22px">
+  <div class="bar"><h2>연습문제</h2></div>
+  <p class="b"><b>1.</b> 회장과 부회장을 포함한 7명이 원탁에 둘러앉을 때</p>
+  <p class="muted" style="padding-left:48px">⑴ 7명이 앉는 경우의 수 &nbsp; ⑵ 회장과 부회장이 이웃하게 앉는 경우의 수</p>
+  <p class="b"><b>2.</b> 정육각형 모양의 탁자 각 변에 1명씩 6명이 둘러앉는 경우의 수</p>
+  <p class="b"><b>3.</b> 정삼각형 모양의 탁자 각 변에 2명씩 6명이 둘러앉는 경우의 수</p>
+  <p class="b"><b>4.</b> 남학생 3명, 여학생 3명이 원탁에 번갈아 앉는 경우의 수</p>
+  <p class="sub">남학생 먼저 원형 배치 후 사이 자리에 여학생 배치</p>
+  <p class="b"><b>5.</b> <span class="orange">(심화)</span> 서로 다른 색 구슬 6개로 만들 수 있는 팔찌의 수</p>
+  <p class="muted" style="margin-top:auto">복습: <a href="quiz.html">간단 퀴즈</a> · <a href="playground.html">원순열 놀이터</a></p>
+</section>
+
+</div>
+<div class="deck-ui">
+  <a href="../../index.html">목록</a>
+  <button id="prev" aria-label="이전 슬라이드">◀</button>
+  <span id="counter"></span>
+  <button id="next" aria-label="다음 슬라이드">▶</button>
+  <button id="full">전체 화면</button>
+</div>
+<script src="../../_공용/웹/deck.js"></script>
+</body>
+</html>

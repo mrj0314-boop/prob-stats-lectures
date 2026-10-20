@@ -1,0 +1,108 @@
+/* 확률과 통계 웹 자료 공용 양식 (Metropolis: 남색 + 주황) */
+:root {
+  --navy: #23373B;
+  --navy-2: #2F474C;
+  --orange: #EB811B;
+  --orange-text: #C4610A;
+  --orange-soft: #FCE9D6;
+  --bg: #FAFAF7;
+  --panel: #FFFFFF;
+  --panel-2: #EEF0EF;
+  --line: #E1E4E3;
+  --text: #23373B;
+  --muted: #4A5A5E;
+  --faint: #6B7A7D;
+  --ok: #3B7EA1;
+  --bad: #C0504D;
+  --wood: #E3C59E;
+  --gray: #8A9499;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  color: var(--text);
+  word-break: keep-all;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); }
+a { color: inherit; }
+
+/* ── 일반 페이지(첫 화면, 퀴즈, 놀이터) ── */
+.topbar { background: var(--navy); color: var(--bg); border-bottom: 6px solid var(--orange); }
+.topbar .in { max-width: 1080px; margin: 0 auto; padding: 18px 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+.topbar h1 { font-size: 24px; font-weight: 700; }
+.topbar nav { margin-left: auto; display: flex; gap: 16px; font-size: 15px; }
+.topbar nav a { text-decoration: none; opacity: .85; }
+.topbar nav a:hover, .topbar nav a[aria-current] { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+main { max-width: 1080px; margin: 0 auto; padding: 32px 16px 64px; }
+.eyebrow { color: var(--orange-text); font-weight: 700; font-size: 15px; }
+h2.page { font-size: 30px; margin: 4px 0 8px; }
+.lead { color: var(--muted); font-size: 17px; line-height: 1.6; margin-bottom: 24px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.btn { font: inherit; font-size: 16px; font-weight: 500; border: 1px solid var(--navy); background: var(--panel); color: var(--navy);
+  border-radius: 8px; padding: 9px 16px; cursor: pointer; }
+.btn:hover { background: var(--panel-2); }
+.btn.primary { background: var(--navy); color: var(--bg); }
+.btn.primary:hover { background: var(--navy-2); }
+.btn[aria-pressed="true"] { background: var(--orange-soft); border-color: var(--orange); }
+.btn:disabled { opacity: .45; cursor: default; }
+.key { background: var(--orange-soft); border-left: 6px solid var(--orange); border-radius: 8px; padding: 10px 16px; font-weight: 700; }
+footer.site { color: var(--faint); font-size: 14px; text-align: center; padding: 24px 16px 40px; }
+
+/* 첫 화면 주차 카드 */
+.weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.week { background: var(--panel); border: 1px solid var(--line); border-top: 6px solid var(--orange); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+.week.todo { border-top-color: var(--line); color: var(--faint); }
+.week h3 { font-size: 19px; }
+.week .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
+.week .links a { font-size: 15px; text-decoration: none; border: 1px solid var(--navy); border-radius: 999px; padding: 4px 12px; }
+.week .links a:hover { background: var(--navy); color: var(--bg); }
+
+/* 퀴즈 */
+#quiz { display: flex; flex-direction: column; gap: 16px; }
+.q .qt { font-size: 19px; font-weight: 500; line-height: 1.55; margin: 6px 0 14px; }
+.q .ans { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.q .opt { border-color: var(--line); }
+.q .opt.right { background: #E3EEF4; border-color: var(--ok); }
+.q .opt.wrong { background: #F6E3E2; border-color: var(--bad); text-decoration: line-through; }
+.q input { font: inherit; font-size: 17px; width: 160px; padding: 8px 12px; border: 1px solid var(--gray); border-radius: 8px; }
+.q .fb { margin-top: 12px; font-size: 16px; line-height: 1.6; }
+.q .fb:empty { display: none; }
+.q .fb.ok { color: #1F5A78; }
+.q .fb.bad { color: #9A3532; }
+.scorebar { position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--line); padding: 12px 0; margin-top: 16px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* ── 슬라이드덱 (1920×1080 무대를 화면 크기에 맞춰 축소) ── */
+body.deck { background: #15201F; overflow: hidden; }
+.stage { position: fixed; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; background: var(--bg); padding: 232px 128px 160px; display: none; overflow: hidden; }
+.slide.active { display: flex; }
+.slide.dark { background: var(--navy); color: var(--bg); padding-top: 128px; }
+.slide > .bar { position: absolute; left: 0; top: 0; width: 100%; height: 168px; background: var(--navy); }
+.slide > .bar h2 { position: absolute; left: 128px; top: 44px; font-size: 64px; font-weight: 700; color: var(--bg); line-height: 1.2; }
+.slide > .progress { position: absolute; left: 0; top: 168px; height: 8px; background: var(--orange); }
+.slide > .foot { position: absolute; left: 128px; right: 128px; bottom: 64px; display: flex; justify-content: space-between; font-size: 24px; color: var(--faint); }
+.slide.dark > .foot { color: #AEBCBF; }
+.slide .row { display: flex; gap: 64px; align-items: center; width: 100%; }
+.slide .col { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.slide .b { font-size: 36px; font-weight: 500; line-height: 1.35; }
+.slide .sub { font-size: 30px; color: var(--muted); padding-left: 40px; line-height: 1.35; }
+.slide .sub::before { content: "– "; }
+.slide .key { font-size: 36px; padding: 12px 28px; }
+.slide .fig { width: 720px; height: 540px; object-fit: contain; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; flex: none; }
+.slide h3 { font-size: 36px; font-weight: 700; line-height: 1.3; }
+.slide .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; width: 100%; }
+.slide .card { background: var(--panel); border: 1px solid var(--line); border-top: 8px solid var(--orange); border-radius: 12px; padding: 40px; display: flex; flex-direction: column; gap: 20px; }
+.slide .num { font-size: 64px; font-weight: 900; color: var(--orange-text); }
+.slide .muted { font-size: 30px; color: var(--muted); }
+.slide .orange { color: var(--orange-text); }
+
+.deck-ui { position: fixed; right: 16px; bottom: 12px; display: flex; gap: 8px; align-items: center; z-index: 5; }
+.deck-ui button, .deck-ui a { font: inherit; font-size: 14px; background: rgba(250,250,247,.12); color: #FAFAF7; border: 1px solid rgba(250,250,247,.3);
+  border-radius: 6px; padding: 5px 10px; cursor: pointer; text-decoration: none; }
+.deck-ui button:hover, .deck-ui a:hover { background: rgba(250,250,247,.25); }
+.deck-ui span { color: #FAFAF7; font-size: 14px; min-width: 56px; text-align: center; }
+@media print {
+  body.deck { overflow: visible; background: none; }
+  .deck-ui { display: none; }
+  .stage { position: static; transform: none !important; }
+  .slide { display: flex !important; position: relative; break-after: page; }
+}

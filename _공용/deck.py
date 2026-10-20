@@ -108,6 +108,32 @@ def arrow(slide, x1, y1, x2, y2, color=GRAY, width=3):
     return a
 
 
+AUTOPLAY_TIMING = """<p:timing xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:tnLst><p:par>
+<p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst>
+<p:seq concurrent="1" nextAc="seek"><p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>
+<p:par><p:cTn id="3" fill="hold"><p:stCondLst><p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/>
+</p:cond></p:stCondLst><p:childTnLst><p:par><p:cTn id="4" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst>
+<p:childTnLst><p:par><p:cTn id="5" presetID="1" presetClass="mediacall" presetSubtype="0" fill="hold" nodeType="afterEffect">
+<p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst><p:cmd type="call" cmd="playFrom(0.0)"><p:cBhvr>
+<p:cTn id="6" dur="1" fill="hold"/><p:tgtEl><p:spTgt spid="{spid}"/></p:tgtEl></p:cBhvr></p:cmd></p:childTnLst>
+</p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn>
+<p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>
+<p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst></p:seq>
+<p:video><p:cMediaNode vol="80000"><p:cTn id="7" fill="hold" display="0"><p:stCondLst><p:cond delay="indefinite"/>
+</p:stCondLst></p:cTn><p:tgtEl><p:spTgt spid="{spid}"/></p:tgtEl></p:cMediaNode></p:video>
+</p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>"""
+
+
+def autoplay(slide, spid):
+    """동영상을 클릭 없이 슬라이드가 열릴 때 자동 재생하도록 타이밍 교체.
+    (PowerPoint에서 '자동 실행'으로 설정했을 때 저장되는 구조와 같음)"""
+    from lxml import etree
+    old = slide._element.find(qn("p:timing"))
+    if old is not None:
+        slide._element.remove(old)
+    slide._element.append(etree.fromstring(AUTOPLAY_TIMING.replace("{spid}", str(spid))))
+
+
 class Deck:
     def __init__(self, footer, fig_dir):
         self.footer = footer
@@ -186,6 +212,29 @@ class Deck:
             if i < len(steps) - 1:
                 arrow(s, x + Inches(2.65), Inches(2.95), x + Inches(3.1), Inches(2.95))
         bullets(s, tail, y=Inches(4.5), w=Inches(12), h=Inches(2.0))
+        self.notes(s, note)
+        return s
+
+    def video(self, title, mp4, poster, question, note=""):
+        """슬라이드 가운데 동영상 (슬라이드가 열리면 자동 재생) + 아래 질문 한 줄."""
+        s = self.frame(title)
+        w, h = Inches(8.8), Inches(4.95)
+        x = (self.prs.slide_width - w) // 2
+        movie = s.shapes.add_movie(str(mp4), x, Inches(1.3), w, h, poster_frame_image=str(poster),
+                                   mime_type="video/mp4")
+        autoplay(s, movie.shape_id)
+        text(s, Inches(0.6), Inches(6.35), Inches(12.1), Inches(0.5), question, 20, ORANGE, True, PP_ALIGN.CENTER)
+        self.notes(s, note)
+        return s
+
+    def gallery(self, title, items, tail, note=""):
+        """그림 3장을 나란히 + 그림마다 설명 한 줄 + 아래 글머리표."""
+        s = self.frame(title)
+        for i, (path, cap) in enumerate(items):
+            x = Inches(0.6 + i * 4.1)
+            self.picture(s, path, x, Inches(1.35), Inches(3.9), Inches(2.6))
+            text(s, x, Inches(4.0), Inches(3.9), Inches(0.5), cap, 18, NAVY, True, PP_ALIGN.CENTER)
+        bullets(s, tail, y=Inches(4.8), w=Inches(12), h=Inches(2.0))
         self.notes(s, note)
         return s
 
